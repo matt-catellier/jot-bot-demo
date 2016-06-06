@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Illuminate\Support\Facades\Input;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 
 
@@ -21,6 +20,7 @@ class AuthenticateController extends Controller
     // not working properly, should not get any results... :(
     public function index() {
         // Retrieve all the users in the database and return them
+        // how does this know the token???
         $users = User::all();
         return $users;
     }
@@ -28,6 +28,7 @@ class AuthenticateController extends Controller
         // can also use Input::only, but then it does have rules built into kernel?
         $credentials = $request->only('email', 'password');
         try {
+
             // verify the credentials and create a token for the user
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -38,6 +39,7 @@ class AuthenticateController extends Controller
         }
 
         // if no errors are encountered we can return a JWT
-        return response()->json(compact('token'));
+        // try to use json_encode(); thats response->json() does...
+        return response()->json(compact('token'));// $token; //response()->json(compact('token')); //response()->json(compact('token'));
     }
 }
